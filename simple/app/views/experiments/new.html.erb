@@ -1,0 +1,23 @@
+
+
+<%= form_for @experiment do |f| %>
+<p>
+<%= f.label :min %><br />
+<%= f.text_field :min %>
+</p>
+<p>
+<%= f.label :max %><br />
+<%= f.text_field :max %>
+</p>
+<p>
+<%= f.label :email_list %><br />
+<%= f.text_field :email_list %>
+</p>
+<p>
+<%= f.label :description %><br />
+<%= f.text_area :description %>
+</p>
+<p><%= f.submit "Submit" %></p>
+<% end %>
+
+
