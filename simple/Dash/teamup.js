@@ -1,25 +1,27 @@
 $(document).ready(function() { 
 		var candidateNum = 5;
+		var ownerId = 1;
+
 		function init() {   // init candidate List 
 		boxDiv = $("#candidateList")
 		for(var index = 0; index < candidateNum ; index ++) {
 		var boardDiv = $('<div></div>');
-		boardDiv.attr('id','stuBor' + index);
-		boardDiv.addClass('bg');
-		boardDiv.appendTo(boxDiv);
+			boardDiv.attr('id','stuBor' + index);
+			boardDiv.addClass('bg');
+			boardDiv.appendTo(boxDiv);
 		var childDiv = $('<div></div>');
-		childDiv.attr('id','stu' + index);
-		childDiv.addClass('bor');
-		childDiv.text('stu'+index)
-		childDiv.appendTo(boardDiv);
+			childDiv.attr('id','stu' + index);
+			childDiv.addClass('bor');
+			childDiv.text('stu'+index)
+			childDiv.appendTo(boardDiv);
 		}
 
 		preferenceDiv = $("#preferenceList")  //init preference List
 		for(var index = 0; index < candidateNum ; index ++) {
 		var boardDiv = $('<div></div>');
-		boardDiv.attr('id','pre' + index);
-		boardDiv.addClass('bg');
-		boardDiv.appendTo(preferenceDiv);
+			boardDiv.attr('id','pre' + index);
+			boardDiv.addClass('bg');
+			boardDiv.appendTo(preferenceDiv);
 		}
 		}
 		init();
@@ -75,6 +77,66 @@ $(document).ready(function() {
 					initDiv.appendTo(targetParentBg);// append new Div to target bg 
 					initDiv.removeClass("borp").addClass("bor").removeAttr("style"); //remove the style 
 					move = false; 
-					}); 
-		}); 
+					});	
+			   	
+		});
+		
+		function getPreferList() {
+			preferenceDiv = $("#preferenceList");  
+						preferBox = preferenceDiv.children(".bg");
+						preferList = new Array();
+						var validcnt = 0 ;
+						for(var index = 0; index <  candidateNum; index ++ ) {
+							var student = -1;
+							if( preferBox[index].children.length > 0 ) {
+								student = preferBox[index].children[0].innerText;
+								validcnt ++;
+							} 
+							preferList.push(student);
+						}
+			if(validcnt != candidateNum)
+				return null;
+			else
+				return preferList;
+		}
+		$("#save").click(
+					function(event) {
+						preferList = getPreferList();
+						if(preferList != null) {
+							sendMyPreference(ownerId, getPreferList, "save");
+						} else {
+							alert("left some candidates!");
+						}
+			});
+		
+		$("#submit").click(
+					function(event) {
+						preferList = getPreferList();
+						if(preferList != null) {
+							sendMyPreference(ownerId, getPreferList, "submit");
+						} else {
+							alert("left some candidates!");
+						}
+			});
+		
+		function sendMyPreference(ownerId, preferList, type) {
+			$.ajax({
+				type : "post",// request method
+				url : "./saveMessage",// target URL
+				dataType : "json",// return data type
+				data : {
+					type : type,
+					ownerId : ownerId,
+					preferList : preferList,
+				},
+				success : function(jsonData) {
+					if (jsonData.result == true) {
+						alert( type + " success!");			
+					} else {
+						alert("fail");	
+					}
+
+				}
+		});
+	}
 }); 
